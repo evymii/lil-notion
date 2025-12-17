@@ -10,13 +10,13 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
-  res.header("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   
   if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
+    return res.status(200).end();
   }
   next();
 });
@@ -49,12 +49,14 @@ app.use(async (req, res, next) => {
   next();
 });
 
-const basePath = process.env.VERCEL ? "" : "/api";
-
-app.use(`${basePath}/notes`, notesRoutes);
-app.use(`${basePath}/subjects`, subjectsRoutes);
+app.use("/api/notes", notesRoutes);
+app.use("/api/subjects", subjectsRoutes);
 
 app.get("/", (req, res) => {
+  res.json({ message: "Notion Notes API" });
+});
+
+app.get("/api", (req, res) => {
   res.json({ message: "Notion Notes API" });
 });
 
@@ -69,4 +71,3 @@ if (!process.env.VERCEL) {
 }
 
 export default app;
-
