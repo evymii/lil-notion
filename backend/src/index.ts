@@ -52,14 +52,14 @@ app.get("/", (req, res) => {
   res.json({ message: "Notion Notes API" });
 });
 
-if (process.env.VERCEL) {
-  await connectDB();
-} else {
+if (!process.env.VERCEL) {
   connectDB().then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   });
+} else {
+  connectDB();
 }
 
 export default app;
