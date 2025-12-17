@@ -11,12 +11,22 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://lil-notion.vercel.app",
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://lil-notion.vercel.app",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
