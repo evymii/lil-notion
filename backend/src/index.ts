@@ -11,15 +11,19 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const corsOptions = {
-  origin: true,
+  origin: [
+    "http://localhost:3000",
+    "https://lil-notion.vercel.app",
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   optionsSuccessStatus: 200,
 };
 
-app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 let isConnected = false;
@@ -49,7 +53,7 @@ app.get("/", (req, res) => {
 });
 
 if (process.env.VERCEL) {
-  connectDB();
+  await connectDB();
 } else {
   connectDB().then(() => {
     app.listen(PORT, () => {

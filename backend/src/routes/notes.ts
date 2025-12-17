@@ -48,15 +48,22 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { name, content, subject } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: "Note name is required" });
+    }
     const note = new Note({
-      name: name || "Untitled",
+      name: name.trim(),
       content: content || "",
       subject: subject || "Uncategorized",
     });
     await note.save();
     res.status(201).json(note);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create note" });
+  } catch (error: any) {
+    console.error("Create note error:", error);
+    res.status(500).json({ 
+      error: "Failed to create note", 
+      details: error.message 
+    });
   }
 });
 
