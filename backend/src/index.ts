@@ -45,6 +45,13 @@ const connectDB = async () => {
   }
 };
 
+app.use(async (req, res, next) => {
+  if (!isConnected) {
+    await connectDB();
+  }
+  next();
+});
+
 app.use("/api/notes", notesRoutes);
 app.use("/api/subjects", subjectsRoutes);
 
