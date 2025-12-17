@@ -1,23 +1,37 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 
 const fetchData = async (endpoint: string) => {
-  const response = await fetch(`${API_URL}${endpoint}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error || errorData.message || `Failed to fetch: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+    return response.json();
+  } catch (error: any) {
+    if (error.message) throw error;
+    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
   }
-  return response.json();
 };
 
 const postData = async (endpoint: string, data: any) => {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to post data");
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error || errorData.message || `Failed to post: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+    return response.json();
+  } catch (error: any) {
+    if (error.message) throw error;
+    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
   }
-  return response.json();
 };
 
 const putData = async (endpoint: string, data: any) => {
@@ -36,13 +50,20 @@ const putData = async (endpoint: string, data: any) => {
 };
 
 const deleteData = async (endpoint: string) => {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error("Failed to delete data");
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error || errorData.message || `Failed to delete: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+    return response.json();
+  } catch (error: any) {
+    if (error.message) throw error;
+    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
   }
-  return response.json();
 };
 
 export const getNotes = (sortBy: string, subject: string, search: string) => {
