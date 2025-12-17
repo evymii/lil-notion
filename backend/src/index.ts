@@ -22,14 +22,22 @@ app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
 
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
   try {
     const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/notion-notes";
     await mongoose.connect(mongoURI);
+    isConnected = true;
     console.log("MongoDB connected");
   } catch (error) {
     console.error("MongoDB connection error:", error);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
   }
 };
 
@@ -40,13 +48,15 @@ app.get("/", (req, res) => {
   res.json({ message: "Notion Notes API" });
 });
 
-connectDB().then(() => {
-  if (!process.env.VERCEL) {
+if (process.env.VERCEL) {
+  connectDB();
+} else {
+  connectDB().then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
-  }
-});
+  });
+}
 
 export default app;
 

@@ -5,13 +5,18 @@ const fetchData = async (endpoint: string) => {
     const response = await fetch(`${API_URL}${endpoint}`);
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error || errorData.message || `Failed to fetch: ${response.status}`;
+      const errorMessage =
+        errorData.error ||
+        errorData.message ||
+        `Failed to fetch: ${response.status}`;
       throw new Error(errorMessage);
     }
     return response.json();
   } catch (error: any) {
     if (error.message) throw error;
-    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
+    throw new Error(
+      `Network error: ${error.message || "Failed to connect to server"}`
+    );
   }
 };
 
@@ -24,29 +29,44 @@ const postData = async (endpoint: string, data: any) => {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error || errorData.message || `Failed to post: ${response.status}`;
+      const errorMessage =
+        errorData.error ||
+        errorData.message ||
+        `Failed to post: ${response.status}`;
       throw new Error(errorMessage);
     }
     return response.json();
   } catch (error: any) {
     if (error.message) throw error;
-    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
+    throw new Error(
+      `Network error: ${error.message || "Failed to connect to server"}`
+    );
   }
 };
 
 const putData = async (endpoint: string, data: any) => {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMessage =
-      errorData.details || errorData.error || "Failed to update data";
-    throw new Error(errorMessage);
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorData.error ||
+        errorData.message ||
+        errorData.details ||
+        `Failed to update: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+    return response.json();
+  } catch (error: any) {
+    if (error.message) throw error;
+    throw new Error(
+      `Network error: ${error.message || "Failed to connect to server"}`
+    );
   }
-  return response.json();
 };
 
 const deleteData = async (endpoint: string) => {
@@ -56,13 +76,18 @@ const deleteData = async (endpoint: string) => {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error || errorData.message || `Failed to delete: ${response.status}`;
+      const errorMessage =
+        errorData.error ||
+        errorData.message ||
+        `Failed to delete: ${response.status}`;
       throw new Error(errorMessage);
     }
     return response.json();
   } catch (error: any) {
     if (error.message) throw error;
-    throw new Error(`Network error: ${error.message || "Failed to connect to server"}`);
+    throw new Error(
+      `Network error: ${error.message || "Failed to connect to server"}`
+    );
   }
 };
 
