@@ -41,8 +41,10 @@ const connectDB = async () => {
   }
 };
 
-app.use("/api/notes", notesRoutes);
-app.use("/api/subjects", subjectsRoutes);
+const basePath = process.env.VERCEL ? "" : "/api";
+
+app.use(`${basePath}/notes`, notesRoutes);
+app.use(`${basePath}/subjects`, subjectsRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Notion Notes API" });
